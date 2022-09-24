@@ -1,7 +1,7 @@
 
 pub mod db_list {
   use crate::list::list_item::Item;
-  use std::{fs::{write, read_to_string, OpenOptions}, io::ErrorKind};
+  use std::{fs::{write, read_to_string}, io::ErrorKind};
 
   const LIST_FILE: &'static str = "./src/data/list.json";
 
