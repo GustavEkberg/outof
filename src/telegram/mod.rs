@@ -1,4 +1,5 @@
 pub mod commands {
+  use uuid::Uuid;
   use crate::list::list_item::Item;
 
   pub enum CommandType {
@@ -14,7 +15,7 @@ pub mod commands {
     // CommandType::List
     CommandType::OutOf(vec![
       Item {
-        id: String::from("id2"), 
+        id: Uuid::new_v4().to_string(), 
         title: String::from("TITLE2")
       }
     ])
