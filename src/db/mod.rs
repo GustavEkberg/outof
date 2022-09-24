@@ -47,6 +47,11 @@ pub mod db_list {
   }
 
   pub fn delete_item(id: String) {
+    let list: Vec<Item> = read_file_list_items()
+      .into_iter()
+      .filter(|i| !i.id.eq(&id))
+      .collect();
+    write_string_to_file(serde_json::to_string(&list).unwrap());
   }
 
 }
