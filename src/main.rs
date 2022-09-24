@@ -1,3 +1,4 @@
+use db::db_list::create_items;
 use list::list_item::list_command;
 use telegram::commands::{get_command, CommandType};
 
@@ -10,7 +11,9 @@ fn main() {
   match command {
     CommandType::Generate => println!("Generate!"),
     CommandType::List => list_command(),
-    CommandType::OutOf(_items) => println!("items")
+    CommandType::OutOf(items) => {
+      create_items(items) 
+    }
   }
 
 }

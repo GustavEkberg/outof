@@ -7,20 +7,17 @@ pub mod commands {
     List
   }
 
-  /**
-   * Get Telegram bot updates sine last successful event
-   */
   fn get_updates(event: u32) {
   }
 
   pub fn get_command() -> CommandType {
-    CommandType::List
-    // CommandType::OutOf(vec![
-    //   Item {
-    //     id: String::from("id"), 
-    //     title: String::from("TITLE")
-    //   }
-    // ])
+    // CommandType::List
+    CommandType::OutOf(vec![
+      Item {
+        id: String::from("id2"), 
+        title: String::from("TITLE2")
+      }
+    ])
   }
 }
 
