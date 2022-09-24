@@ -1,17 +1,29 @@
 
 pub mod db_list {
   use crate::list::list_item::Item;
-  use std::fs::{write, read_to_string};
+  use std::{fs::{write, read_to_string, OpenOptions}, io::ErrorKind};
 
   const LIST_FILE: &'static str = "./src/data/list.json";
 
   /**
    * Private
    */
-  fn read_file_items() -> Vec<Item> {
-    serde_json::from_str(read_to_string(LIST_FILE)
-      .unwrap()
-      .as_str()
+  fn init_list_file() {
+    write(LIST_FILE, "[]").unwrap();
+  }
+
+  fn read_file_list_items() -> Vec<Item> {
+    serde_json::from_str(
+      match read_to_string(LIST_FILE) {
+        Ok(result) => result,
+        Err(error) => match error.kind() {
+          ErrorKind::NotFound => {
+            init_list_file();
+            "[]".to_string()
+          },
+          _ => panic!("Read list file panic {}", error)
+        }
+      }.as_str()
     ).unwrap()
   }
 
@@ -23,11 +35,11 @@ pub mod db_list {
    * Public 
    */
   pub fn get_items() -> Vec<Item> {
-    read_file_items()
+    read_file_list_items()
   }
 
   pub fn create_items(items: Vec<Item>) {
-    let mut list = read_file_items();
+    let mut list = read_file_list_items();
     for item in items {
       list.push(item);
     }
