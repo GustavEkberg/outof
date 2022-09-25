@@ -11,29 +11,27 @@ pub mod db_list {
    * Private
    */
   fn init_list_file() {
-    match create_dir(DATA_FOLDER) {
-      Ok(()) => Ok(()),
-      Err(error) => match error.kind() {
-        ErrorKind::AlreadyExists => Ok(()),
-        _ => Err(error)
+    create_dir(DATA_FOLDER).unwrap_or_else(|error| {
+      match error.kind() {
+        ErrorKind::AlreadyExists => (),
+        _ => panic!("Create data folder panic! {:#?}", error)
       }
-    }.unwrap();
+    });
       
     write(OUTOF_FILE, "[]").unwrap();
   }
 
   fn read_file_list_items() -> Vec<Item> {
     serde_json::from_str(
-      match read_to_string(OUTOF_FILE) {
-        Ok(result) => result,
-        Err(error) => match error.kind() {
+      read_to_string(OUTOF_FILE).unwrap_or_else(|error| {
+        match error.kind() {
           ErrorKind::NotFound => {
             init_list_file();
             "[]".to_string()
           },
-          _ => panic!("Read list file panic {}", error)
+          _ => panic!("Read list file panic! {:#?}", error)
         }
-      }.as_str()
+      }).as_str()
     ).unwrap()
   }
 
