@@ -1,4 +1,5 @@
 pub mod commands {
+  use chrono::Utc;
   use uuid::Uuid;
   use crate::list::list_item::Item;
 
@@ -16,7 +17,9 @@ pub mod commands {
     CommandType::OutOf(vec![
       Item {
         id: Uuid::new_v4().to_string(), 
-        title: String::from("TITLE2")
+        title: String::from("TITLE2"),
+        created: Utc::now().timestamp_micros(),
+        user: String::from("A user")
       }
     ])
   }

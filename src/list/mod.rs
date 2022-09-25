@@ -5,7 +5,9 @@ pub mod list_item {
   #[derive(Serialize,Deserialize,Debug)]
   pub struct Item {
     pub id: String,
-    pub title: String
+    pub title: String,
+    pub created: i64,
+    pub user: String
   }
 
   pub fn list_command() {

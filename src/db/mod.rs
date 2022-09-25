@@ -1,20 +1,30 @@
 
 pub mod db_list {
   use crate::list::list_item::Item;
-  use std::{fs::{write, read_to_string}, io::ErrorKind};
+  use std::fs::{write, read_to_string, create_dir};
+  use std::io::ErrorKind;
 
-  const LIST_FILE: &'static str = "./src/data/list.json";
+  const DATA_FOLDER: &'static str = "./src/data/";
+  const OUTOF_FILE: &'static str = "./src/data/outOfItems.json";
 
   /**
    * Private
    */
   fn init_list_file() {
-    write(LIST_FILE, "[]").unwrap();
+    match create_dir(DATA_FOLDER) {
+      Ok(()) => Ok(()),
+      Err(error) => match error.kind() {
+        ErrorKind::AlreadyExists => Ok(()),
+        _ => Err(error)
+      }
+    }.unwrap();
+      
+    write(OUTOF_FILE, "[]").unwrap();
   }
 
   fn read_file_list_items() -> Vec<Item> {
     serde_json::from_str(
-      match read_to_string(LIST_FILE) {
+      match read_to_string(OUTOF_FILE) {
         Ok(result) => result,
         Err(error) => match error.kind() {
           ErrorKind::NotFound => {
@@ -28,7 +38,7 @@ pub mod db_list {
   }
 
   fn write_string_to_file(items: String) {
-    write(LIST_FILE, items).unwrap();
+    write(OUTOF_FILE, items).unwrap();
   }
   
   /**
