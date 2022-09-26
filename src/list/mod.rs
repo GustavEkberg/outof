@@ -1,4 +1,5 @@
 pub mod list_item {
+  use chrono::{Utc, TimeZone};
   use serde::{Serialize, Deserialize};
 
   #[derive(Serialize,Deserialize,Debug)]
@@ -15,7 +16,7 @@ pub mod list_item {
 
   impl Chat for Item {
     fn to_chat_message(&self) -> String { 
-      format!("{} ({}), \n", &self.title, &self.user)
+      format!("{} ({}) {},\n", &self.title, &self.user, Utc.timestamp(self.created, 0).format("%m-%d %H:%M"))
     }
   }
 }

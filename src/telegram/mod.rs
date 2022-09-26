@@ -10,7 +10,7 @@ pub mod commands {
     OutOf(String),
     #[command(description = "Generate a new shopping list based on the items you are currently outof")]
     Generate,
-    #[command(description = "Display a list of all outof")]
+    #[command(description = "Display a list of all outof items")]
     List
   }
 
