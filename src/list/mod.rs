@@ -16,14 +16,18 @@ pub trait Chat {
 
 impl Chat for Item {
   fn to_chat_message(&self) -> String { 
-    format!("{} ({}) {},\n", &self.title, &self.user, Utc.timestamp(self.created, 0).format("%m-%d %H:%M"))
+    format!("{} ({}) {},\n", 
+      &self.title, 
+      &self.user, 
+      Utc.timestamp(self.created, 0).format("%m-%d %H:%M")
+    )
   }
 }
 
 pub fn generate_list_name() -> String {
   let mut rand = thread_rng();
   format!("{} {}", 
-    ADJECTIVES[rand.gen_range(0..ADJECTIVES.len())].to_string(), 
+    ADJECTIVES[rand.gen_range(0..ADJECTIVES.len())], 
     ANIMALS[rand.gen_range(0..ANIMALS.len())]
   ).replace(" ", "_")
 }

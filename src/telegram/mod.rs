@@ -1,6 +1,6 @@
 use std::error::Error;
 use teloxide::{prelude::*, utils::command::BotCommands};
-use crate::{db::{create_items, get_items}, list::generate_list_name};
+use crate::db::{create_items, get_items, create_new_list};
 
 #[derive(BotCommands, Clone)]
 #[command(rename = "lowercase", description = "I support the following commands:")]
@@ -21,17 +21,21 @@ pub async fn setup_bot() {
   teloxide::commands_repl(bot, response, CommandType::ty()).await;
 }
 
-pub async fn response(bot: AutoSend<Bot>, message: Message, command: CommandType) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub async fn response(
+  bot: AutoSend<Bot>, 
+  message: Message, 
+  command: CommandType
+) -> Result<(), Box<dyn Error + Send + Sync>> {
   match command {
     CommandType::OutOf(input) => {
-      create_items(&input, message.from().unwrap().full_name());
+      create_items(&input, &message.from().unwrap().full_name());
       bot.send_message(message.chat.id, format!("Added items {input}")).await?
     },
     CommandType::List => {
       bot.send_message(message.chat.id, get_items()).await?
     }
     CommandType::Generate => {
-      bot.send_message(message.chat.id, generate_list_name()).await?
+      bot.send_message(message.chat.id, create_new_list()).await?
     }
   };
 

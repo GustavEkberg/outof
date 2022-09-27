@@ -1,6 +1,6 @@
 use chrono::Utc;
 use uuid::Uuid;
-use crate::list::{Item, Chat};
+use crate::list::{Item, Chat, generate_list_name};
 use std::fs::{write, read_to_string, create_dir};
 use std::io::ErrorKind;
 
@@ -39,7 +39,10 @@ fn write_string_to_file(items: String) {
   write(OUTOF_FILE, items).unwrap();
 }
 
-fn parse_items(string: &String, user: String) -> Vec<Item> {
+fn parse_items(
+  string: &String, 
+  user: &String
+) -> Vec<Item> {
   string.split(",")
     .into_iter()
     .map(|item| Item {
@@ -63,7 +66,10 @@ pub fn get_items() -> String {
   items
 }
 
-pub fn create_items(items: &String, user: String) {
+pub fn create_items(
+  items: &String, 
+  user: &String
+) {
   let mut list = read_file_list_items();
   for item in parse_items(items, user) {
     list.push(item);
@@ -77,4 +83,23 @@ pub fn _delete_item(id: String) {
     .filter(|i| !i.id.eq(&id))
     .collect();
   write_string_to_file(serde_json::to_string(&list).unwrap());
+}
+
+pub fn create_new_list() -> String {
+  let name = generate_list_name();
+  init_file(
+    &list_name_to_file(&name),
+    &serde_json::to_string(
+      &read_file_list_items()
+    ).unwrap()
+  );
+  name
+}
+
+
+pub fn list_name_to_file(name: &String) -> String {
+  format!("{}{}.json",
+    DATA_FOLDER,
+    name
+  )
 }
