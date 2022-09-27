@@ -16,4 +16,5 @@ uuid = { version = "1.1.2", features = ["v4"] }
 teloxide = { version = "0.10", features = ["macros", "auto-send"] }
 log = "0.4"
 pretty_env_logger = "0.4"
-tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"] }
+tokio = { version =  "1.8", features = ["full"] }
+warp = "0.3"
