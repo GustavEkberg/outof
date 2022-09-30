@@ -1,10 +1,12 @@
 use chrono::Utc;
 use uuid::Uuid;
 use crate::list::{Item, Chat, generate_list_name};
-use std::fs::{write, read_to_string, create_dir};
+use std::fs::{write, read_to_string, create_dir, read_dir};
 use std::io::ErrorKind;
+use std::path::PathBuf;
 
 const DATA_FOLDER: &'static str = "./src/data/";
+const LIST_FOLDER: &'static str = "./src/data/lists/";
 const OUTOF_FILE: &'static str = "./src/data/outOfItems.json";
 
 /**
@@ -15,6 +17,13 @@ fn init_file(file: &str, init_value: &str) {
     match error.kind() {
       ErrorKind::AlreadyExists => (),
       _ => panic!("Create data folder panic! {:#?}", error)
+    }
+  });
+
+  create_dir(LIST_FOLDER).unwrap_or_else(|error| {
+    match error.kind() {
+      ErrorKind::AlreadyExists => (),
+      _ => panic!("Create list folder panic! {:#?}", error)
     }
   });
     
@@ -96,10 +105,34 @@ pub fn create_new_list() -> String {
   name
 }
 
+pub fn get_lists_names() -> Vec<String>{
+ read_dir(LIST_FOLDER).unwrap()
+    .into_iter()
+    .map(|entry| file_to_list_name(&entry
+        .unwrap()
+        .path())
+      .unwrap())
+    .collect::<Vec<String>>()
+}
 
 pub fn list_name_to_file(name: &String) -> String {
   format!("{}{}.json",
-    DATA_FOLDER,
+    LIST_FOLDER,
     name
   )
+}
+
+pub fn file_to_list_name(file: &PathBuf) -> Option<String> {
+  if !file.is_file() {
+    None
+  } else {
+    Some(file.file_name()
+      .unwrap()
+      .to_str()
+      .unwrap()
+      .to_string()
+      .replace(".json", "")
+      .replace("_", " ")
+    )
+  }
 }
