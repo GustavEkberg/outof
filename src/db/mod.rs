@@ -30,9 +30,23 @@ fn init_file(file: &str, init_value: &str) {
   write(file, init_value).unwrap();
 }
 
-fn read_file_list_items() -> Vec<Item> {
+fn read_file_all_list_items() -> Vec<Item> {
   serde_json::from_str(
     read_to_string(OUTOF_FILE).unwrap_or_else(|error| {
+      match error.kind() {
+        ErrorKind::NotFound => {
+          init_file(OUTOF_FILE, "[]");
+          "[]".to_string()
+        },
+        _ => panic!("Read all list file panic! {:#?}", error)
+      }
+    }).as_str()
+  ).unwrap()
+}
+
+pub fn read_file_list_items(list: &String) -> Vec<Item> {
+  serde_json::from_str(
+    read_to_string(list_name_to_file(list)).unwrap_or_else(|error| {
       match error.kind() {
         ErrorKind::NotFound => {
           init_file(OUTOF_FILE, "[]");
@@ -66,10 +80,20 @@ fn parse_items(
 /**
  * Public 
  */
-pub fn get_items() -> String {
+pub fn get_all_items() -> String {
   let mut items: String = String::new();
 
-  for item in read_file_list_items() {
+  for item in read_file_all_list_items() {
+    items += &item.to_chat_message()
+  };
+  items
+}
+
+pub fn get_list_items(list: &String) -> String {
+  let mut items: String = String::new();
+
+  items += &String::from("asd");
+  for item in read_file_list_items(list) {
     items += &item.to_chat_message()
   };
   items
@@ -79,7 +103,7 @@ pub fn create_items(
   items: &String, 
   user: &String
 ) {
-  let mut list = read_file_list_items();
+  let mut list = read_file_all_list_items();
   for item in parse_items(items, user) {
     list.push(item);
   }
@@ -87,7 +111,7 @@ pub fn create_items(
 }
 
 pub fn _delete_item(id: String) {
-  let list: Vec<Item> = read_file_list_items()
+  let list: Vec<Item> = read_file_all_list_items()
     .into_iter()
     .filter(|i| !i.id.eq(&id))
     .collect();
@@ -99,7 +123,7 @@ pub fn create_new_list() -> String {
   init_file(
     &list_name_to_file(&name),
     &serde_json::to_string(
-      &read_file_list_items()
+      &read_file_all_list_items()
     ).unwrap()
   );
   name
