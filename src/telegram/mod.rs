@@ -28,14 +28,27 @@ pub async fn response(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
   match command {
     CommandType::OutOf(input) => {
-      create_items(&input, &message.from().unwrap().full_name());
-      bot.send_message(message.chat.id, format!("Added items {input}")).await?
+      create_items(
+        &message.chat.id.to_string(), 
+        &input, 
+        &message.from().unwrap().full_name()
+      );
+      bot.send_message(
+        message.chat.id, 
+        format!("Added items {input}")
+      ).await?
     },
     CommandType::List => {
-      bot.send_message(message.chat.id, get_all_items()).await?
+      bot.send_message(
+        message.chat.id, 
+        get_all_items(&message.chat.id.to_string())
+      ).await?
     }
     CommandType::Generate => {
-      bot.send_message(message.chat.id, create_new_list()).await?
+      bot.send_message(
+        message.chat.id, 
+        create_new_list(&message.chat.id.to_string())
+      ).await?
     }
   };
 

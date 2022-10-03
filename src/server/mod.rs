@@ -4,13 +4,13 @@ use crate::db::{get_lists_names, get_list_items};
 pub async fn setup_server() {
   let lists = warp::path("lists")
     .map(|| {
-      get_lists_names()
+      get_lists_names(&String::from("-766036841"))
         .join("\n")
     });
 
   let list = warp::path("list")
     .and(warp::path::param())
-    .map(|list: String| get_list_items(&list));
+    .map(|list: String| get_list_items(&String::from("-766036841"), &list));
 
   let routes = warp::get()
     .and(
