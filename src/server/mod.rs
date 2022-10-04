@@ -2,15 +2,17 @@ use warp::Filter;
 use crate::db::{get_lists_names, get_list_items};
 
 pub async fn setup_server() {
-  let lists = warp::path("lists")
-    .map(|| {
-      get_lists_names(&String::from("-766036841"))
+  let lists = warp::path::param()
+    .and(warp::path("lists"))
+    .map(|id: String| {
+      get_lists_names(&id)
         .join("\n")
     });
 
-  let list = warp::path("list")
+  let list = warp::path::param()
+    .and(warp::path("list"))
     .and(warp::path::param())
-    .map(|list: String| get_list_items(&String::from("-766036841"), &list));
+    .map(|id: String, list: String| get_list_items(&id, &list));
 
   let routes = warp::get()
     .and(
