@@ -52,14 +52,25 @@ fn read_file_all_list_items(chat_id: &String) -> Vec<Item> {
   ).unwrap()
 }
 
-pub fn read_file_list_items(chat_id: &String, list: &String) -> Vec<Item> {
-  serde_json::from_str(
-    read_to_string(list_name_to_file(
-        chat_id, 
-        list
-      )).unwrap()
-      .as_str()
-  ).unwrap()
+pub fn read_file_list_items(chat_id: &String, list: &String) -> Option<Vec<Item>> {
+  if !Path::new(
+    &list_name_to_file(
+      chat_id, 
+      list
+    )
+  ).exists() {
+    None
+  } else {
+    Some(
+      serde_json::from_str(
+      read_to_string(list_name_to_file(
+          chat_id, 
+          list
+        )).unwrap()
+        .as_str()
+      ).unwrap()
+    )
+  }
 }
 
 fn write_string_to_file(
@@ -96,14 +107,22 @@ pub fn get_all_items(chat_id: &String) -> String {
   items
 }
 
-pub fn get_list_items(chat_id: &String, list: &String) -> String {
-  let mut items: String = String::new();
+pub fn get_list_items(
+  chat_id: &String, 
+  list: &String
+) -> String {
+  let items = read_file_list_items(chat_id, &list.replace("%20", "_"));
 
-  items += &String::from("asd");
-  for item in read_file_list_items(chat_id, list) {
-    items += &item.to_chat_message()
-  };
-  items
+  if items.is_none() {
+    String::from("Empty list")
+  } else {
+    items.unwrap()
+      .iter()
+      .map(|item| {
+        item.to_chat_message()
+      })
+      .collect()
+  }
 }
 
 pub fn create_items(
