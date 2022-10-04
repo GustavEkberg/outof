@@ -2,6 +2,9 @@ use warp::Filter;
 use crate::db::{get_lists_names, get_list_items};
 
 pub async fn setup_server() {
+  let home = warp::get()
+    .map(|| String::from("Hello and welcome to outof"));
+    
   let lists = warp::path::param()
     .and(warp::path("lists"))
     .map(|id: String| {
@@ -17,7 +20,8 @@ pub async fn setup_server() {
   let routes = warp::get()
     .and(
       lists
-        .or(list)
+      .or(list)
+      .or(home)
     );
 
   println!("Starting server...");
