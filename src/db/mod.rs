@@ -52,7 +52,7 @@ fn read_file_all_list_items(chat_id: &String) -> Vec<Item> {
   ).unwrap()
 }
 
-pub fn read_file_list_items(chat_id: &String, list: &String) -> Option<Vec<Item>> {
+fn read_file_list_items(chat_id: &String, list: &String) -> Option<Vec<Item>> {
   if !Path::new(
     &list_name_to_file(
       chat_id, 
@@ -63,10 +63,12 @@ pub fn read_file_list_items(chat_id: &String, list: &String) -> Option<Vec<Item>
   } else {
     Some(
       serde_json::from_str(
-      read_to_string(list_name_to_file(
-          chat_id, 
-          list
-        )).unwrap()
+        read_to_string(
+          list_name_to_file(
+            chat_id, 
+            list
+          )
+        ).unwrap()
         .as_str()
       ).unwrap()
     )
@@ -88,7 +90,7 @@ fn parse_items(
     .into_iter()
     .map(|item| Item {
       id: Uuid::new_v4().to_string(), 
-      title: item.to_string(),
+      title: item.trim().to_string(),
       user: user.to_string(),
       created: Utc::now().timestamp()
     })
