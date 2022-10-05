@@ -16,7 +16,7 @@ pub trait Chat {
 
 impl Chat for Item {
   fn to_chat_message(&self) -> String { 
-    format!("{} ({}) {},\n", 
+    format!("{} ({}) {}\n", 
       &self.title, 
       &self.user, 
       Utc.timestamp(self.created, 0).format("%m-%d %H:%M")

@@ -112,19 +112,8 @@ pub fn get_all_items(chat_id: &String) -> String {
 pub fn get_list_items(
   chat_id: &String, 
   list: &String
-) -> String {
-  let items = read_file_list_items(chat_id, &list.replace("%20", "_"));
-
-  if items.is_none() {
-    String::from("Empty list")
-  } else {
-    items.unwrap()
-      .iter()
-      .map(|item| {
-        item.to_chat_message()
-      })
-      .collect()
-  }
+) -> Option<Vec<Item>> {
+  read_file_list_items(chat_id, &list.replace(" ", "_"))
 }
 
 pub fn create_items(

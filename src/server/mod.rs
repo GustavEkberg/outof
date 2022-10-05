@@ -1,5 +1,5 @@
 use warp::Filter;
-use crate::db::{get_lists_names, get_list_items};
+use crate::frontend::{build_list_page, build_lists_page};
 
 pub async fn setup_server() {
   let home = warp::get()
@@ -8,14 +8,15 @@ pub async fn setup_server() {
   let lists = warp::path::param()
     .and(warp::path("lists"))
     .map(|id: String| {
-      get_lists_names(&id)
-        .join("\n")
-    });
+      build_lists_page(&id)
+    })
+    .with(warp::reply::with::header("Content-Type", "text/html"));
 
   let list = warp::path::param()
     .and(warp::path("list"))
     .and(warp::path::param())
-    .map(|id: String, list: String| get_list_items(&id, &list));
+    .map(|id: String, list: String| build_list_page(&id, &list.replace("%20", " ")))
+    .with(warp::reply::with::header("Content-Type", "text/html"));
 
   let routes = warp::get()
     .and(
