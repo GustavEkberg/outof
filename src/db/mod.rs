@@ -52,11 +52,14 @@ fn read_file_all_list_items(chat_id: &String) -> Vec<Item> {
   ).unwrap()
 }
 
-fn read_file_list_items(chat_id: &String, list: &String) -> Option<Vec<Item>> {
+fn read_file_list_items(
+  chat_id: &String, 
+  list_name: &String
+) -> Option<Vec<Item>> {
   if !Path::new(
     &list_name_to_file(
       chat_id, 
-      list
+      list_name
     )
   ).exists() {
     None
@@ -66,7 +69,7 @@ fn read_file_list_items(chat_id: &String, list: &String) -> Option<Vec<Item>> {
         read_to_string(
           list_name_to_file(
             chat_id, 
-            list
+            list_name
           )
         ).unwrap()
         .as_str()
@@ -128,7 +131,9 @@ pub fn create_items(
 
   let mut list = read_file_all_list_items(chat_id);
   for item in parse_items(items, user) {
-    list.push(item);
+    if item.title.len() > 0 {
+      list.push(item);
+    };
   }
 
   write_string_to_file(
@@ -137,33 +142,49 @@ pub fn create_items(
   );
 }
 
-// pub fn _delete_item(
-//   chat_id: &String, 
-//   id: &String
-// ) {
-//   let list: Vec<Item> = read_file_all_list_items()
-//     .into_iter()
-//     .filter(|i| !i.id.eq(id))
-//     .collect();
+pub fn delete_item(
+  chat_id: &String, 
+  list_name: &String,
+  item_id: &String,
 
-//   write_string_to_file(
-//     &format!("{}/{}/items.json", DATA_FOLDER, chat_id),
-//     &serde_json::to_string(&list).unwrap()
-//   );
-// }
+) {
+  let list: Vec<Item> = read_file_all_list_items(chat_id)
+    .into_iter()
+    .filter(|i| !i.id.eq(item_id))
+    .collect();
 
-pub fn create_new_list(chat_id: &String) -> String {
-  let name = generate_list_name();
+  write_string_to_file(
+    Path::new(&format!("{}/{}/items.json", DATA_FOLDER, chat_id)),
+    &serde_json::to_string(&list).unwrap()
+  );
+
+  let list: Vec<Item> = read_file_list_items(chat_id, list_name)
+    .unwrap()
+    .into_iter()
+    .filter(|i| !i.id.eq(item_id))
+    .collect();
+
   write_string_to_file(
     Path::new(&list_name_to_file(
       chat_id, 
-      &name
+      list_name
+    )),
+    &serde_json::to_string(&list).unwrap()
+  );
+}
+
+pub fn create_new_list(chat_id: &String) -> String {
+  let list_name = generate_list_name();
+  write_string_to_file(
+    Path::new(&list_name_to_file(
+      chat_id, 
+      &list_name
     )),
     &serde_json::to_string(
       &read_file_all_list_items(chat_id)
     ).unwrap()
   );
-  name
+  list_name
 }
 
 pub fn get_lists_names(chat_id: &String) -> Vec<String>{
@@ -183,10 +204,10 @@ pub fn list_name_to_file(
   chat_id: &String,
   name: &String
 ) -> String { // TODO: Return Path
-  format!("{}/{}/lists/{}.json",
+  format!("{}{}/lists/{}.json",
     DATA_FOLDER,
     chat_id,
-    name
+    name.replace(" ", "_")
   )
 }
 

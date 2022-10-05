@@ -1,4 +1,4 @@
-use crate::{list::{Item, Chat}, db::{get_list_items, get_lists_names}};
+use crate::{list::Item, db::{get_list_items, get_lists_names}};
 
 /**
  * Private
@@ -24,7 +24,7 @@ fn build_item_list(
 fn build_lists(id: &String, lists: Vec<String>) -> String {
   lists.iter()
     .map(|list| {
-      format!("<li><a href='/{}/list/{}'>{}</a></li>" ,
+      format!("<div class='item'><a href='/{}/list/{}'>{}</a></div>" ,
         id, 
         list,
         list
@@ -53,7 +53,7 @@ fn build_styles() -> String {
 }
 
 fn build_head(title: &String) -> String {
-  format!("<head><title>{}</title>{}</head>", 
+  format!("<head><title>{}</title>{}<meta charset=\"UTF-8\"></head>", 
     title, 
     build_styles()
   )

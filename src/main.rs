@@ -5,6 +5,7 @@ mod telegram;
 mod db;
 mod list;
 mod server;
+mod frontend;
 
 #[tokio::main]
 async fn main() {

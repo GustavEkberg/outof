@@ -1,5 +1,15 @@
+use std::str::FromStr;
+
+use http::Uri;
 use warp::Filter;
-use crate::frontend::{build_list_page, build_lists_page};
+
+use crate::{
+  frontend::{
+    build_list_page, 
+    build_lists_page
+  }, 
+  db::delete_item
+};
 
 pub async fn setup_server() {
   let home = warp::get()
@@ -18,9 +28,34 @@ pub async fn setup_server() {
     .map(|id: String, list: String| build_list_page(&id, &list.replace("%20", " ")))
     .with(warp::reply::with::header("Content-Type", "text/html"));
 
+  let delete = warp::path::param()
+    .and(warp::path("list"))
+    .and(warp::path::param())
+    .and(warp::path("item"))
+    .and(warp::path::param())
+    .map(|
+      chat_id: String, 
+      list_name: String, 
+      item_id: String
+    | {
+      delete_item(
+        &chat_id, 
+        &list_name.replace("%20"," "),
+        &item_id
+      );
+      warp::redirect(Uri::from_str(
+        &format!("/{}/list/{}",
+          chat_id,
+          list_name
+        ).as_str())
+        .unwrap()
+      )
+    });
+
   let routes = warp::get()
     .and(
       lists
+      .or(delete)
       .or(list)
       .or(home)
     );
