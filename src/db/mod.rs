@@ -209,7 +209,15 @@ pub fn create_new_list(chat_id: &String) -> String {
       &read_file_all_list_items(chat_id)
     ).unwrap()
   );
-  list_name
+
+  format!("[{}]({}{}/{})", 
+    list_name,
+    std::env::var("DOMAIN").unwrap_or_else(
+      |_| "http://localhost:8888/".to_string(),
+    ),
+    chat_id,
+    list_name
+  )
 }
 
 pub fn get_lists_names(chat_id: &String) -> Vec<String>{

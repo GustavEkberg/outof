@@ -1,5 +1,5 @@
 use std::error::Error;
-use teloxide::{prelude::*, utils::command::BotCommands};
+use teloxide::{prelude::*, utils::command::BotCommands, types::ParseMode};
 use crate::db::{create_items, get_all_items, create_new_list};
 
 #[derive(BotCommands, Clone)]
@@ -14,10 +14,10 @@ pub enum CommandType {
 }
 
 pub async fn setup_bot() {
-  let bot = Bot::from_env().auto_send();
-  
-  println!("Starting bot...");
+  let bot = Bot::from_env()
+    .auto_send();
 
+  println!("Starting bot...");
   teloxide::commands_repl(bot, response, CommandType::ty()).await;
 }
 
@@ -35,7 +35,7 @@ pub async fn response(
       );
       bot.send_message(
         message.chat.id, 
-        format!("Added items {input}")
+        format!("Added items {}", input)
       ).await?
     },
     CommandType::List => {
