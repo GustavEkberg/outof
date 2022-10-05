@@ -1,7 +1,13 @@
 use chrono::Utc;
 use uuid::Uuid;
 use crate::list::{Item, Chat, generate_list_name};
-use std::fs::{write, read_to_string, create_dir, read_dir};
+use std::fs::{
+  write, 
+  read_to_string, 
+  create_dir, 
+  read_dir, 
+  remove_file
+};
 use std::io::ErrorKind;
 use std::path::{PathBuf, Path};
 
@@ -100,6 +106,18 @@ fn parse_items(
     .collect()
 }
 
+fn remove_list_file(
+  chat_id: &String,
+  list_name: &String
+) {
+  remove_file(
+    list_name_to_file(
+      chat_id, 
+      list_name
+    )
+  ).unwrap();
+}
+
 /**
  * Public 
  */
@@ -164,13 +182,20 @@ pub fn delete_item(
     .filter(|i| !i.id.eq(item_id))
     .collect();
 
-  write_string_to_file(
-    Path::new(&list_name_to_file(
-      chat_id, 
+  if list.len() == 0 {
+    remove_list_file(
+      chat_id,
       list_name
-    )),
-    &serde_json::to_string(&list).unwrap()
-  );
+    )
+  } else {
+    write_string_to_file(
+      Path::new(&list_name_to_file(
+        chat_id, 
+        list_name
+      )),
+      &serde_json::to_string(&list).unwrap()
+    );
+  }
 }
 
 pub fn create_new_list(chat_id: &String) -> String {
