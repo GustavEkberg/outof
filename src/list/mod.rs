@@ -26,10 +26,10 @@ impl Chat for Item {
 
 pub fn generate_list_name() -> String {
   let mut rand = thread_rng();
-  format!("{}_{}", 
+  format!("{} {}", 
     ADJECTIVES[rand.gen_range(0..ADJECTIVES.len())], 
     ANIMALS[rand.gen_range(0..ANIMALS.len())]
-  ).replace(" ", "_")
+  )
 }
 
 const ADJECTIVES: [&str; 1095] = [

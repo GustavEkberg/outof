@@ -45,10 +45,11 @@ pub async fn response(
       ).await?
     }
     CommandType::Generate => {
-      bot.send_message(
-        message.chat.id, 
-        create_new_list(&message.chat.id.to_string())
-      ).await?
+      bot.parse_mode(ParseMode::MarkdownV2)
+        .send_message(
+          message.chat.id, 
+          create_new_list(&message.chat.id.to_string()).replace("_", "\\_")
+        ).await?
     }
   };
 
