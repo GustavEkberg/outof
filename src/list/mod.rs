@@ -1,4 +1,4 @@
-use std::{path::Path};
+use std::{path::Path, fs};
 
 use chrono::{Utc, TimeZone};
 use rand::{thread_rng, Rng};
@@ -75,6 +75,26 @@ pub fn create_items(
   );
 }
 
+pub fn create_new_list(chat_id: &String) -> String {
+  let list_name = generate_list_name();
+  fs::copy(
+    &format!("{}/{}/items.json", DATA_FOLDER, chat_id),
+    Path::new(&list_name_to_file(
+      chat_id, 
+      &list_name
+    ))
+  ).unwrap();
+
+  format!("[{}]({}{}/list/{})", 
+    list_name,
+    std::env::var("DOMAIN").unwrap_or_else(
+      |_| "http://127.0.0.1:8888/".to_string(),
+    ),
+    chat_id,
+    list_name
+  )
+}
+
 pub fn delete_item(
   chat_id: &String, 
   list_name: &String,
@@ -113,28 +133,6 @@ pub fn delete_item(
       &serde_json::to_string(&list).unwrap()
     );
   }
-}
-
-pub fn create_new_list(chat_id: &String) -> String {
-  let list_name = generate_list_name();
-  write_string_to_file(
-    Path::new(&list_name_to_file(
-      chat_id, 
-      &list_name
-    )),
-    &serde_json::to_string(
-      &read_file_all_list_items(chat_id)
-    ).unwrap()
-  );
-
-  format!("[{}]({}{}/list/{})", 
-    list_name,
-    std::env::var("DOMAIN").unwrap_or_else(
-      |_| "http://127.0.0.1:8888/".to_string(),
-    ),
-    chat_id,
-    list_name
-  )
 }
 
 pub fn get_lists_names(chat_id: &String) -> Vec<String>{
