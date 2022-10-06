@@ -68,7 +68,7 @@ pub async fn setup_server() {
 
   println!("Starting server on {}...", 
     std::env::var("DOMAIN").unwrap_or_else(
-      |_| "http://localhost:8888/".to_string()
+      |_| "http://127.0.0.1:8888/".to_string()
     )
   );
   warp::serve(routes)

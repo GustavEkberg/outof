@@ -8,7 +8,7 @@ use std::fs::{
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 
-pub const DATA_FOLDER: &'static str = "./src/data/";
+pub const DATA_FOLDER: &'static str = "./data/";
 
 pub fn init_user_files(chat_id: &String) {
   create_dir(DATA_FOLDER).unwrap_or_else(|error| {
