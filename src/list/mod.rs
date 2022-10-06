@@ -103,7 +103,7 @@ pub fn delete_item(
     remove_list_file(
       chat_id,
       list_name
-    )
+    );
   } else {
     write_string_to_file(
       Path::new(&list_name_to_file(

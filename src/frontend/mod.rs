@@ -4,6 +4,41 @@ use crate::list::{
   get_list_items
 };
 
+fn build_styles() -> String {
+  "<style>
+    html {
+      background-color: black;
+      text-align: center;
+      color: white;
+      font-size: 1.5em;
+    }
+
+    h1 {
+      font-size: 3em;
+    }
+
+    a:-webkit-any-link {
+      color: white;
+      text-decoration: none;
+    }
+
+    .item {
+      display: flex;
+      align-content: space-around;
+      justify-content: space-evenly;
+      width: 100%;
+    }
+
+  </style>".to_string()
+}
+
+fn build_head(title: &String) -> String {
+  format!("<head><title>{}</title>{}<meta charset=\"UTF-8\"></head>", 
+    title, 
+    build_styles()
+  )
+}
+
 fn build_item_list(
   id: &String, 
   list: &String,
@@ -37,35 +72,6 @@ fn build_lists(id: &String, lists: Vec<String>) -> String {
     .collect()
 }
 
-fn build_styles() -> String {
-  "<style>
-    html {
-      background-color: black;
-      text-align: center;
-      color: white;
-    }
-
-    a:-webkit-any-link {
-      color: white;
-      text-decoration: none;
-    }
-
-    item {
-
-    }
-  </style>".to_string()
-}
-
-fn build_head(title: &String) -> String {
-  format!("<head><title>{}</title>{}<meta charset=\"UTF-8\"></head>", 
-    title, 
-    build_styles()
-  )
-}
-
-/**
- * Public
- */
 pub fn build_list_page(
   id: &String,
   list: &String
