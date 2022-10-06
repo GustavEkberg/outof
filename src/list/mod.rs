@@ -1,6 +1,18 @@
+use std::{path::Path};
+
 use chrono::{Utc, TimeZone};
 use rand::{thread_rng, Rng};
 use serde::{Serialize, Deserialize};
+use uuid::Uuid;
+
+use crate::db::{
+  read_file_all_list_items, 
+  write_string_to_file, 
+  DATA_FOLDER, 
+  read_file_list_items, 
+  remove_list_file,
+  init_user_files, read_list_names
+};
 
 #[derive(Serialize,Deserialize,Debug)]
 pub struct Item {
@@ -22,6 +34,153 @@ impl Chat for Item {
       Utc.timestamp(self.created, 0).format("%m-%d %H:%M")
     )
   }
+}
+
+pub fn get_all_items(chat_id: &String) -> String {
+  let mut items: String = String::new();
+
+  for item in read_file_all_list_items(chat_id) {
+    items += &item.to_chat_message()
+  };
+  items
+}
+
+pub fn get_list_items(
+  chat_id: &String, 
+  list: &String
+) -> Option<Vec<Item>> {
+  read_file_list_items(chat_id, &list.replace(" ", "_"))
+}
+
+pub fn create_items(
+  chat_id: &String,
+  items: &String, 
+  user: &String
+) {
+
+  if !Path::new(&format!("{}/{}/", DATA_FOLDER, chat_id)).exists() {
+     init_user_files(chat_id);
+  }
+
+  let mut list = read_file_all_list_items(chat_id);
+  for item in parse_items(items, user) {
+    if item.title.len() > 0 {
+      list.push(item);
+    };
+  }
+
+  write_string_to_file(
+    Path::new(&format!("{}{}/items.json", DATA_FOLDER, chat_id)),
+    &serde_json::to_string(&list).unwrap()
+  );
+}
+
+pub fn delete_item(
+  chat_id: &String, 
+  list_name: &String,
+  item_id: &String,
+
+) {
+  let list: Vec<Item> = read_file_all_list_items(chat_id)
+    .into_iter()
+    .filter(|i| !i.id.eq(item_id))
+    .collect();
+
+  write_string_to_file(
+    Path::new(&format!("{}/{}/items.json", DATA_FOLDER, chat_id)),
+    &serde_json::to_string(&list).unwrap()
+  );
+
+  let list: Vec<Item> = read_file_list_items(chat_id, list_name)
+    .unwrap()
+    .into_iter()
+    .filter(|i| !i.id.eq(item_id))
+    .collect();
+
+  if list.len() == 0 {
+    remove_list_file(
+      chat_id,
+      list_name
+    )
+  } else {
+    write_string_to_file(
+      Path::new(&list_name_to_file(
+        chat_id, 
+        list_name
+      )),
+      &serde_json::to_string(&list).unwrap()
+    );
+  }
+}
+
+pub fn create_new_list(chat_id: &String) -> String {
+  let list_name = generate_list_name();
+  write_string_to_file(
+    Path::new(&list_name_to_file(
+      chat_id, 
+      &list_name
+    )),
+    &serde_json::to_string(
+      &read_file_all_list_items(chat_id)
+    ).unwrap()
+  );
+
+  format!("[{}]({}{}/{})", 
+    list_name,
+    std::env::var("DOMAIN").unwrap_or_else(
+      |_| "http://localhost:8888/".to_string(),
+    ),
+    chat_id,
+    list_name
+  )
+}
+
+pub fn get_lists_names(chat_id: &String) -> Vec<String>{
+  read_list_names(chat_id) 
+    .into_iter()
+    .map(|entry| file_to_list_name(&entry).unwrap())
+    .collect::<Vec<String>>()
+}
+
+pub fn list_name_to_file(
+  chat_id: &String,
+  name: &String
+) -> String { // TODO: Return Path
+  format!("{}{}/lists/{}.json",
+    DATA_FOLDER,
+    chat_id,
+    name.replace(" ", "_")
+  )
+}
+
+pub fn file_to_list_name(file: &Path) -> Option<String> {
+  if !file.is_file() {
+    None
+  } else {
+    Some(file.file_name()
+      .unwrap()
+      .to_str()
+      .unwrap()
+      .to_string()
+      .replace(".json", "")
+      .replace("_", " ")
+    )
+  }
+}
+
+pub fn parse_items(
+  string: &String, 
+  user: &String
+) -> Vec<Item> {
+  string.split(",")
+    .into_iter()
+    .map(|item| Item {
+      id: Uuid::new_v4().to_string(), 
+      title: item.trim().to_string(),
+      user: user.to_string(),
+      created: Utc::now().timestamp()
+    })
+    .collect()
 }
 
 pub fn generate_list_name() -> String {

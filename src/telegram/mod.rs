@@ -1,6 +1,15 @@
 use std::error::Error;
-use teloxide::{prelude::*, utils::command::BotCommands, types::ParseMode};
-use crate::db::{create_items, get_all_items, create_new_list};
+use teloxide::{
+  prelude::*, 
+  utils::command::BotCommands, 
+  types::ParseMode
+};
+
+use crate::list::{
+  create_items, 
+  get_all_items, 
+  create_new_list
+};
 
 #[derive(BotCommands, Clone)]
 #[command(rename = "lowercase", description = "I support the following commands:")]

@@ -1,8 +1,9 @@
-use crate::{list::Item, db::{get_list_items, get_lists_names}};
+use crate::list::{
+  Item, 
+  get_lists_names, 
+  get_list_items
+};
 
-/**
- * Private
- */
 fn build_item_list(
   id: &String, 
   list: &String,

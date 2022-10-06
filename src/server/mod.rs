@@ -8,7 +8,7 @@ use crate::{
     build_list_page, 
     build_lists_page
   }, 
-  db::delete_item
+  list::delete_item
 };
 
 pub async fn setup_server() {
