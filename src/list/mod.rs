@@ -127,7 +127,7 @@ pub fn create_new_list(chat_id: &String) -> String {
     ).unwrap()
   );
 
-  format!("[{}]({}{}/{})", 
+  format!("[{}]({}{}/list/{})", 
     list_name,
     std::env::var("DOMAIN").unwrap_or_else(
       |_| "http://127.0.0.1:8888/".to_string(),
