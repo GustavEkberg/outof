@@ -11,11 +11,14 @@ fn build_item_list(
 ) -> String {
   items.iter()
     .map(|item| {
-      format!("<div class='item'><a href='/{}/list/{}/item/{}'>{}</a></div>" ,
+      format!("<div class='item'><a href='/{}/list/{}/item/{}?skip=true'>👎</a><span>{}</span><a href='/{}/list/{}/item/{}?skip=false'>👍</a></div>" ,
         id,
         list,
         item.id,
-        item.title
+        item.title,
+        id,
+        list,
+        item.id,
     )
     })
     .collect()

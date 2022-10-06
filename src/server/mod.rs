@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{str::FromStr, collections::HashMap};
 
 use http::Uri;
 use warp::Filter;
@@ -33,15 +33,21 @@ pub async fn setup_server() {
     .and(warp::path::param())
     .and(warp::path("item"))
     .and(warp::path::param())
+    .and(warp::query::<HashMap<String, String>>())
     .map(|
       chat_id: String, 
       list_name: String, 
-      item_id: String
+      item_id: String,
+      query_params: HashMap<String, String>
     | {
       delete_item(
         &chat_id, 
         &list_name.replace("%20"," "),
-        &item_id
+        &item_id,
+        query_params.get("skip")
+          .ok_or("false")
+          .unwrap()
+          .eq("true")
       );
       warp::redirect(Uri::from_str(
         &format!("/{}/list/{}",

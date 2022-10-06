@@ -79,17 +79,19 @@ pub fn delete_item(
   chat_id: &String, 
   list_name: &String,
   item_id: &String,
-
+  skip: bool
 ) {
-  let list: Vec<Item> = read_file_all_list_items(chat_id)
-    .into_iter()
-    .filter(|i| !i.id.eq(item_id))
-    .collect();
+  if !skip {
+    let list: Vec<Item> = read_file_all_list_items(chat_id)
+      .into_iter()
+      .filter(|i| !i.id.eq(item_id))
+      .collect();
 
-  write_string_to_file(
-    Path::new(&format!("{}/{}/items.json", DATA_FOLDER, chat_id)),
-    &serde_json::to_string(&list).unwrap()
-  );
+    write_string_to_file(
+      Path::new(&format!("{}/{}/items.json", DATA_FOLDER, chat_id)),
+      &serde_json::to_string(&list).unwrap()
+    );
+  }
 
   let list: Vec<Item> = read_file_list_items(chat_id, list_name)
     .unwrap()
