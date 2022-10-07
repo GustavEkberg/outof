@@ -20,5 +20,13 @@ The other option is to mark it as **not purchased** in this shopping session. It
 
 When a list no longer has any items, it will be removed. At the end of every shopping session, the list should be empty.
 
+## Running your own
+If you want to run/develop your own instance of outof you need to run it with these environment variables:
+```
+TELEGRAM_BOT= 
+DOMAIN=
+```
+Where `TELEGRAM_BOT` is the API token for your telegram bot and `DOMAIN` is the domain of your website for lists.
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

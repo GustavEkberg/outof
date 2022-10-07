@@ -28,7 +28,12 @@ pub enum CommandType {
 }
 
 pub async fn setup_bot() {
-    let bot = Bot::from_env().auto_send();
+    let bot = Bot::new(
+        std::env::var("TELEGRAM_BOT")
+            .expect("Missing env variable TELEGRAM_BOT")
+            .to_string()
+    )
+    .auto_send();
 
     println!("Starting bot...");
     teloxide::commands_repl(bot, response, CommandType::ty()).await;
