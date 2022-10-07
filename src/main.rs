@@ -1,15 +1,14 @@
-use telegram::setup_bot;
 use server::setup_server;
+use telegram::setup_bot;
 
-mod telegram;
 mod db;
+mod frontend;
 mod list;
 mod server;
-mod frontend;
+mod telegram;
 
 #[tokio::main]
 async fn main() {
-
-  tokio::spawn(setup_server());
-  setup_bot().await;
+    tokio::spawn(setup_server());
+    setup_bot().await;
 }
