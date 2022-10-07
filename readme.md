@@ -2,7 +2,7 @@
 Outof is a minimal grocery list service for a single or shared household using [Telegram](https://telegram.org/) as their main communication. 
 
 ## Installation
-Invite [@iamoutof_bot](https://t.me/iamoutof_bot) to a channel where you or your household communicate.
+Invite [@iamoutof_bot](https://t.me/iamoutof_bot) to a channel.
 
 ## Usage
 
@@ -20,10 +20,10 @@ The other option is to mark it as **not purchased** in this shopping session. It
 
 When a list no longer has any items, it will be removed. At the end of every shopping session, the list should be empty.
 
-## Running your own
+## Development
 Environment variables:
-`TELEGRAM_BOT` is the API token for your telegram bot. Required
-`DOMAIN` is the domain of your website for lists, it defaults to `127.0.0.1:8888`.
+`TELEGRAM_BOT` is the API token for your telegram bot. **Required**.    
+`DOMAIN` is the domain of your website for lists, it defaults to `127.0.0.1:8888`. @iamoutof_bot uses [outof.im](https://outof.im/) 
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
