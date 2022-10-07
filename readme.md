@@ -1,10 +1,10 @@
-### About
+## About
 Outof is a minimal grocery list service for a single or shared household using [Telegram](https://telegram.org/) as their main communication. 
 
-### Installation
+## Installation
 Invite [@iamoutof_bot](https://t.me/iamoutof_bot) to a channel where you or your household communicate.
 
-### Usage
+## Usage
 
 ### Commands
 Outof consists of 3 commands:
