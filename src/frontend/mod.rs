@@ -7,35 +7,49 @@ use crate::list::{
 fn build_styles() -> String {
     "<style>
     html {
-      background-color: black;
-      text-align: center;
-      color: white;
-      font-size: 1.5em;
+        background-color: black;
+        text-align: center;
+        color: white;
     }
 
     h1 {
-      font-size: 3em;
+        font-size: 3em;
     }
 
     a:-webkit-any-link {
-      color: white;
-      text-decoration: none;
+        color: white;
+        text-decoration: none;
     }
 
     .item {
-      display: flex;
-      align-content: space-around;
-      justify-content: space-evenly;
-      width: 100%;
+        font-size: 1.5em;
+        display: flex;
+        align-content: space-around;
+        justify-content: space-evenly;
+        width: 100%;
+        padding-bottom:0.5em;
     }
 
+    @media only screen and (max-width: 600px) {
+        h1 {
+            font-size:3.5em;
+        }
+        .item {
+            font-size: 2.5em;
+        }
+    }
   </style>"
-        .to_string()
+  .to_string()
 }
 
 fn build_head(title: &String) -> String {
     format!(
-        "<head><title>{}</title>{}<meta charset=\"UTF-8\"></head>",
+        "<head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <title>{}</title>
+            {}
+        <meta charset=\"UTF-8\">
+        </head>",
         title,
         build_styles()
     )
@@ -48,7 +62,7 @@ fn build_item_list(
 ) -> String {
     items.iter()
     .map(|item| {
-      format!("<div class='item'><a href='/{}/list/{}/item/{}?skip=true'>👎</a><span>{}</span><a href='/{}/list/{}/item/{}?skip=false'>👍</a></div>" ,
+      format!("<div class='item'><a href='/{}/list/{}/item/{}?skip=true'>X</a><span>{}</span><a href='/{}/list/{}/item/{}?skip=false'>✓</a></div>" ,
         id,
         list,
         item.id,
