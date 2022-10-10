@@ -16,18 +16,27 @@ fn build_styles() -> String {
         font-size: 3em;
     }
 
-    a:-webkit-any-link {
-        color: white;
+    a {
         text-decoration: none;
+        color: white;
     }
 
     .item {
+        color: white;
         font-size: 1.5em;
         display: flex;
         align-content: space-around;
         justify-content: space-evenly;
         width: 100%;
         padding-bottom:0.5em;
+    }
+
+    .skip {
+        color: red;
+    }
+
+    .bought {
+        color: green;
     }
 
     @media only screen and (max-width: 600px) {
@@ -62,7 +71,10 @@ fn build_item_list(
 ) -> String {
     items.iter()
     .map(|item| {
-      format!("<div class='item'><a href='/{}/list/{}/item/{}?skip=true'>X</a><span>{}</span><a href='/{}/list/{}/item/{}?skip=false'>✓</a></div>" ,
+      format!("<div class='item'>
+        <a href='/{}/list/{}/item/{}?skip=true' class='skip'>X</a>
+        <span>{}</span>
+        <a href='/{}/list/{}/item/{}?skip=false' class='bought'>✓</a></div>" ,
         id,
         list,
         item.id,
