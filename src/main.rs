@@ -1,5 +1,6 @@
 use server::setup_server;
 use telegram::setup_bot;
+use tokio::join;
 
 mod db;
 mod frontend;
@@ -9,6 +10,5 @@ mod telegram;
 
 #[tokio::main]
 async fn main() {
-    tokio::spawn(setup_server());
-    setup_bot().await;
+    join!(setup_server(),setup_bot());
 }
