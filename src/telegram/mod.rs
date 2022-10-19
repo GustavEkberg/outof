@@ -31,7 +31,6 @@ pub async fn setup_bot() {
     let bot = Bot::new(
         std::env::var("TELEGRAM_BOT")
             .expect("Missing env variable TELEGRAM_BOT")
-            .to_string()
     )
     .auto_send();
 
@@ -68,7 +67,7 @@ pub async fn response(
             bot.parse_mode(ParseMode::MarkdownV2)
                 .send_message(
                     message.chat.id,
-                    create_new_list(&message.chat.id.to_string()).replace("_", "\\_")
+                    create_new_list(&message.chat.id.to_string()).replace('_', "\\_")
                 )
                 .await?
         }

@@ -51,7 +51,7 @@ fn build_styles() -> String {
   .to_string()
 }
 
-fn build_head(title: &String) -> String {
+fn build_head(title: &str) -> String {
     format!(
         "<head>
             <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -65,8 +65,8 @@ fn build_head(title: &String) -> String {
 }
 
 fn build_item_list(
-    id: &String,
-    list: &String,
+    id: &str,
+    list: &str,
     items: Vec<Item>
 ) -> String {
     items.iter()
@@ -88,7 +88,7 @@ fn build_item_list(
 }
 
 fn build_lists(
-    id: &String,
+    id: &str,
     lists: Vec<String>
 ) -> String {
     lists
@@ -103,26 +103,26 @@ fn build_lists(
 }
 
 pub fn build_list_page(
-    id: &String,
-    list: &String
+    id: &str,
+    list: &str
 ) -> String {
-    let mut response: String = build_head(&list);
+    let mut response: String = build_head(list);
 
     response += &format!("<h1>{}</h1>", list);
 
-    let items = get_list_items(&id, &list);
-    if items.is_none() {
-        response.push_str("Empty list");
+    let items = get_list_items(id, list);
+    if let Some(i) = items {
+        response.push_str(build_item_list(id, list, i).as_str());
     } else {
-        response.push_str(build_item_list(id, list, items.unwrap()).as_str());
+        response.push_str("Empty list");
     }
 
     response
 }
 
-pub fn build_lists_page(id: &String) -> String {
-    let mut response: String = build_head(&"Lists".to_string());
+pub fn build_lists_page(id: &str) -> String {
+    let mut response: String = build_head("Lists");
 
-    response.push_str(&build_lists(id, get_lists_names(&id)));
+    response.push_str(&build_lists(id, get_lists_names(id)));
     response
 }

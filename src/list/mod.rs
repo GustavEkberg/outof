@@ -50,7 +50,7 @@ impl Chat for Item {
     }
 }
 
-pub fn get_all_items(chat_id: &String) -> String {
+pub fn get_all_items(chat_id: &str) -> String {
     let mut items: String = String::new();
 
     for item in read_file_all_list_items(chat_id) {
@@ -60,16 +60,16 @@ pub fn get_all_items(chat_id: &String) -> String {
 }
 
 pub fn get_list_items(
-    chat_id: &String,
-    list: &String
+    chat_id: &str,
+    list: &str
 ) -> Option<Vec<Item>> {
-    read_file_list_items(chat_id, &list.replace(" ", "_"))
+    read_file_list_items(chat_id, &list.replace(' ', "_"))
 }
 
 pub fn create_items(
-    chat_id: &String,
-    items: &String,
-    user: &String
+    chat_id: &str,
+    items: &str,
+    user: &str
 ) {
     if !Path::new(&format!("{}/{}/", DATA_FOLDER, chat_id)).exists() {
         init_user_files(chat_id);
@@ -77,7 +77,7 @@ pub fn create_items(
 
     let mut list = read_file_all_list_items(chat_id);
     for item in parse_items(items, user) {
-        if item.title.len() > 0 {
+        if !item.title.is_empty() {
             list.push(item);
         };
     }
@@ -91,7 +91,7 @@ pub fn create_items(
     );
 }
 
-pub fn create_new_list(chat_id: &String) -> String {
+pub fn create_new_list(chat_id: &str) -> String {
     let list_name = generate_list_name();
     fs::copy(
         &format!("{}/{}/items.json", DATA_FOLDER, chat_id),
@@ -109,9 +109,9 @@ pub fn create_new_list(chat_id: &String) -> String {
 }
 
 pub fn delete_item(
-    chat_id: &String,
-    list_name: &String,
-    item_id: &String,
+    chat_id: &str,
+    list_name: &str,
+    item_id: &str,
     skip: bool
 ) {
     if !skip {
@@ -135,7 +135,7 @@ pub fn delete_item(
         .filter(|i| !i.id.eq(item_id))
         .collect();
 
-    if list.len() == 0 {
+    if list.is_empty() {
         remove_list_file(chat_id, list_name);
     } else {
         write_string_to_file(
@@ -145,7 +145,7 @@ pub fn delete_item(
     }
 }
 
-pub fn get_lists_names(chat_id: &String) -> Vec<String> {
+pub fn get_lists_names(chat_id: &str) -> Vec<String> {
     read_list_names(chat_id)
         .into_iter()
         .map(|entry| file_to_list_name(&entry).unwrap())
@@ -153,15 +153,15 @@ pub fn get_lists_names(chat_id: &String) -> Vec<String> {
 }
 
 pub fn list_name_to_file(
-    chat_id: &String,
-    name: &String
+    chat_id: &str,
+    name: &str
 ) -> String {
     // TODO: Return Path
     format!(
         "{}{}/lists/{}.json",
         DATA_FOLDER,
         chat_id,
-        name.replace(" ", "_")
+        name.replace(' ', "_")
     )
 }
 
@@ -176,17 +176,17 @@ pub fn file_to_list_name(file: &Path) -> Option<String> {
                 .unwrap()
                 .to_string()
                 .replace(".json", "")
-                .replace("_", " ")
+                .replace('_', " ")
         )
     }
 }
 
 pub fn parse_items(
-    string: &String,
-    user: &String
+    string: &str,
+    user: &str
 ) -> Vec<Item> {
     string
-        .split(",")
+        .split(',')
         .into_iter()
         .map(|item| Item {
             id: Uuid::new_v4().to_string(),

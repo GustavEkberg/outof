@@ -15,9 +15,9 @@ use std::path::{
     PathBuf
 };
 
-pub const DATA_FOLDER: &'static str = "./data/";
+pub const DATA_FOLDER: &str = "./data/";
 
-pub fn init_user_files(chat_id: &String) {
+pub fn init_user_files(chat_id: &str) {
     create_dir(DATA_FOLDER).unwrap_or_else(|error| match error.kind() {
         ErrorKind::AlreadyExists => (),
         _ => panic!("Create data folder panic! {:#?}", error)
@@ -52,7 +52,7 @@ pub fn init_user_files(chat_id: &String) {
     .unwrap();
 }
 
-pub fn read_file_all_list_items(chat_id: &String) -> Vec<Item> {
+pub fn read_file_all_list_items(chat_id: &str) -> Vec<Item> {
     serde_json::from_str(
         read_to_string(&format!(
             "{}/{}/items.json",
@@ -64,7 +64,7 @@ pub fn read_file_all_list_items(chat_id: &String) -> Vec<Item> {
     .unwrap()
 }
 
-pub fn read_list_names(chat_id: &String) -> Vec<PathBuf> {
+pub fn read_list_names(chat_id: &str) -> Vec<PathBuf> {
     read_dir(format!(
         "{}/{}/lists/",
         DATA_FOLDER, chat_id,
@@ -75,8 +75,8 @@ pub fn read_list_names(chat_id: &String) -> Vec<PathBuf> {
 }
 
 pub fn read_file_list_items(
-    chat_id: &String,
-    list_name: &String
+    chat_id: &str,
+    list_name: &str
 ) -> Option<Vec<Item>> {
     if !Path::new(&list_name_to_file(chat_id, list_name)).exists() {
         None
@@ -94,14 +94,14 @@ pub fn read_file_list_items(
 
 pub fn write_string_to_file(
     file: &Path,
-    items: &String
+    items: &str
 ) {
     write(file, items).unwrap();
 }
 
 pub fn remove_list_file(
-    chat_id: &String,
-    list_name: &String
+    chat_id: &str,
+    list_name: &str
 ) {
     remove_file(list_name_to_file(chat_id, list_name)).unwrap();
 }

@@ -52,7 +52,7 @@ pub async fn setup_server() {
                     query_params.get("skip").ok_or("false").unwrap().eq("true")
                 );
                 warp::redirect(
-                    Uri::from_str(&format!("/{}/list/{}", chat_id, list_name).as_str()).unwrap()
+                    Uri::from_str(format!("/{}/list/{}", chat_id, list_name).as_str()).unwrap()
                 )
             }
         );
