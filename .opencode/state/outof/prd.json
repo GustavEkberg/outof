@@ -1,0 +1,188 @@
+{
+  "prdName": "outof",
+  "tasks": [
+    {
+      "id": "setup-1",
+      "category": "setup",
+      "description": "Clean scaffold with Next.js, Effect-TS, Drizzle, and Turso dependencies",
+      "steps": [
+        "Remove existing boilerplate files not needed for outof",
+        "package.json has dependencies: next, effect, drizzle-orm, @libsql/client",
+        "tsconfig.json configured with strict mode and path aliases",
+        ".env.example documents all required env vars",
+        "pnpm install succeeds",
+        "pnpm tsc passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-1",
+      "category": "db",
+      "description": "Drizzle schema for items, shopping lists, and shopping list items",
+      "steps": [
+        "lib/services/db/schema.ts defines item table (id, chatId, title, userName, createdAt)",
+        "lib/services/db/schema.ts defines shoppingList table (id, chatId, name, createdAt)",
+        "lib/services/db/schema.ts defines shoppingListItem table (id, shoppingListId, itemId, title, userName)",
+        "drizzle.config.ts configured for Turso",
+        "pnpm db:push creates tables in Turso (manual verification)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "service-db",
+      "category": "service",
+      "description": "Effect-TS service for Turso database connection",
+      "steps": [
+        "lib/services/db/live-layer.ts exports Db service",
+        "Service provides Drizzle client configured for Turso",
+        "Config uses TURSO_DATABASE_URL and TURSO_AUTH_TOKEN",
+        "lib/layers.ts exports AppLayer with Db.Live"
+      ],
+      "passes": false
+    },
+    {
+      "id": "service-telegram",
+      "category": "service",
+      "description": "Effect-TS service for sending Telegram messages",
+      "steps": [
+        "lib/services/telegram/live-layer.ts exports Telegram service",
+        "Service has sendMessage(chatId, text, parseMode?) method",
+        "Config uses TELEGRAM_BOT_TOKEN",
+        "lib/layers.ts includes Telegram.Live in AppLayer"
+      ],
+      "passes": false
+    },
+    {
+      "id": "domain-item",
+      "category": "domain",
+      "description": "Core functions for managing items",
+      "steps": [
+        "lib/core/item/queries.ts has getItemsByChatId(chatId)",
+        "lib/core/item/queries.ts has createItems(chatId, items[], userName)",
+        "lib/core/item/queries.ts has deleteItem(itemId)",
+        "All functions return Effect with proper error types"
+      ],
+      "passes": false
+    },
+    {
+      "id": "domain-list",
+      "category": "domain",
+      "description": "Core functions for managing shopping lists",
+      "steps": [
+        "lib/core/list/queries.ts has createShoppingList(chatId, name, items[])",
+        "lib/core/list/queries.ts has getShoppingList(chatId, name)",
+        "lib/core/list/queries.ts has removeFromShoppingList(shoppingListId, itemId)",
+        "lib/core/list/name-generator.ts generates random Adjective Animal names"
+      ],
+      "passes": false
+    },
+    {
+      "id": "api-webhook",
+      "category": "api",
+      "description": "API route to receive Telegram updates",
+      "steps": [
+        "app/api/telegram/webhook/route.ts handles POST",
+        "Validates X-Telegram-Bot-Api-Secret-Token header",
+        "Returns 401 if secret invalid",
+        "Returns 200 for valid requests",
+        "Parses Telegram Update object"
+      ],
+      "passes": false
+    },
+    {
+      "id": "bot-outof",
+      "category": "bot",
+      "description": "Handle /outof command to add items",
+      "steps": [
+        "Parses /outof milk, eggs, bread into [milk, eggs, bread]",
+        "Stores items with chatId, userName, timestamp",
+        "Responds Added items milk, eggs, bread",
+        "Handles empty input gracefully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "bot-list",
+      "category": "bot",
+      "description": "Handle /list command to show items",
+      "steps": [
+        "Retrieves all items for chatId",
+        "Formats as item (user) MM-DD HH:MM per line",
+        "Responds with formatted list",
+        "Shows No items if empty"
+      ],
+      "passes": false
+    },
+    {
+      "id": "bot-generate",
+      "category": "bot",
+      "description": "Handle /generate command to create shopping list",
+      "steps": [
+        "Generates random list name (Adjective Animal)",
+        "Creates shopping list with snapshot of current items",
+        "Responds with markdown link [Name](https://outof.im/{chatId}/list/{name})",
+        "Shows No items to generate list if empty"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-list",
+      "category": "ui",
+      "description": "Web page to display and interact with shopping list",
+      "steps": [
+        "app/[chatId]/list/[name]/page.tsx renders list",
+        "Shows list name as heading",
+        "Each item has skip (X) and bought (checkmark) buttons",
+        "Dark theme, mobile-friendly styling",
+        "Shows List complete when empty"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-actions",
+      "category": "ui",
+      "description": "Handle bought/skip actions on shopping list items",
+      "steps": [
+        "GET /{chatId}/list/{name}/item/{id}?action=bought removes from both lists",
+        "GET /{chatId}/list/{name}/item/{id}?action=skip removes from shopping list only",
+        "Redirects back to list page after action",
+        "Invalid action returns 400"
+      ],
+      "passes": false
+    },
+    {
+      "id": "docs-1",
+      "category": "docs",
+      "description": "README and setup instructions",
+      "steps": [
+        "README.md explains what outof does",
+        "Documents environment variables",
+        "Includes webhook registration command",
+        "AGENTS.md updated for new project structure"
+      ],
+      "passes": false
+    }
+  ],
+  "context": {
+    "patterns": [
+      "Effect-TS services: reference_repo/lib/services/*/live-layer.ts",
+      "AppLayer composition: reference_repo/lib/layers.ts",
+      "API routes: reference_repo/app/api/*/route.ts"
+    ],
+    "keyFiles": [
+      "reference_repo/outof/src/main.rs",
+      "reference_repo/outof/src/telegram/mod.rs",
+      "reference_repo/outof/src/list/mod.rs",
+      "reference_repo/lib/services/db/live-layer.ts",
+      "reference_repo/lib/services/telegram/live-layer.ts"
+    ],
+    "nonGoals": [
+      "User authentication",
+      "Multiple lists per chat",
+      "Item categories/sorting",
+      "Recurring items",
+      "Rich web dashboard",
+      "Telegram inline mode"
+    ]
+  }
+}
