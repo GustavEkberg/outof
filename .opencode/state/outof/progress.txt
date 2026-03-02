@@ -22,3 +22,13 @@ Started: 2026-03-02
 - Added `.opencode/` to `.prettierignore` (was causing false failures)
 - Files changed: `.prettierignore`
 - **Learnings:** Codebase was pre-scaffolded with full implementation across all layers. All 13 PRD tasks appear code-complete; just need verification passes.
+
+## Task - db-1
+
+- Verified Drizzle schema: `item` (id, chatId, title, userName, createdAt), `shoppingList` (id, chatId, name, createdAt), `shoppingListItem` (id, shoppingListId, itemId, title, userName)
+- All tables have CUID2 primary keys, appropriate indexes and foreign keys
+- `drizzle.config.ts` configured with `dialect: 'turso'`, reads env vars
+- `pnpm db:push` script wired to `drizzle-kit push`
+- pnpm tsc passes, pnpm lint clean
+- Files changed: none (already correct)
+- **Learnings:** Schema uses `$defaultFn(() => createId())` for CUID2 IDs; `integer('col', { mode: 'timestamp' })` for SQLite timestamp columns; `uniqueIndex` for composite unique constraints
