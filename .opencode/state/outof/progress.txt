@@ -112,3 +112,15 @@ Started: 2026-03-02
 - Sends MarkdownV2 link `[Escaped Name](url)` with proper special char escaping
 - Files changed: none (already correct)
 - **Learnings:** Telegram MarkdownV2 requires escaping `_*[]()~` etc. with backslash. The regex `/[_*[\]()~\`>#+\-=|{}.!]/g` covers all special chars.
+
+## Task - ui-list
+
+- Verified shopping list page at `app/[chatId]/list/[name]/page.tsx`
+- List name shown as `<h1>` heading using `list.name`
+- Each item has skip (X) and bought (✓) links pointing to action route
+- Dark theme via `bg-black text-white` in globals.css + layout.tsx; mobile-friendly via `max-w-md mx-auto`
+- Empty list shows "List complete!"; missing list shows "List not found or already completed"
+- `prefetch={false}` on action links prevents Next.js from pre-triggering actions
+- pnpm tsc passes, pnpm lint clean
+- Files changed: none (already correct)
+- **Learnings:** Page uses async server component with `await params` (Next.js 16 pattern). Three states: list not found, empty items, items present.

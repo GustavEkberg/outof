@@ -136,7 +136,7 @@
         "Dark theme, mobile-friendly styling",
         "Shows List complete when empty"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-actions",
