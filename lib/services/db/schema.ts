@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { createId } from '@paralleldrive/cuid2';
 
 // Items the household is "out of"
@@ -15,7 +15,7 @@ export const item = sqliteTable(
       .notNull()
       .$defaultFn(() => new Date())
   },
-  table => [uniqueIndex('idx_item_chat_id').on(table.chatId)]
+  table => [index('idx_item_chat_id').on(table.chatId)]
 );
 
 export type Item = typeof item.$inferSelect;
