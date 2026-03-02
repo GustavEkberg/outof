@@ -26,32 +26,36 @@ Next.js 16 App Router application with Effect-TS service architecture, Drizzle O
 ```
 outof/
 ├── app/
-│   ├── api/telegram/webhook/   # Telegram webhook handler
-│   ├── [chatId]/list/[name]/   # Shopping list pages
-│   └── page.tsx                # Landing page
+│   ├── api/telegram/webhook/          # Telegram webhook handler
+│   ├── [chatId]/list/[name]/
+│   │   ├── page.tsx                   # Shopping list page
+│   │   └── item/[itemId]/route.ts     # Bought/skip action route
+│   └── page.tsx                       # Landing page
 ├── lib/
 │   ├── core/
-│   │   ├── item/               # Item domain logic
-│   │   ├── list/               # Shopping list logic + name generator
-│   │   └── errors/             # Shared domain errors
+│   │   ├── item/                      # Item domain logic
+│   │   ├── list/                      # Shopping list logic + name generator
+│   │   └── errors/                    # Shared domain errors (NotFoundError, ValidationError)
 │   ├── services/
-│   │   ├── db/                 # Turso database (Drizzle)
-│   │   └── telegram/           # Telegram Bot API
-│   └── layers.ts               # AppLayer composition
-└── reference_repo/             # Original Rust implementation (reference only)
+│   │   ├── db/                        # Turso database (Drizzle)
+│   │   └── telegram/                  # Telegram Bot API + errors
+│   ├── layers.ts                      # AppLayer composition
+│   └── utils.ts                       # cn() Tailwind utility
+└── reference_repo/                    # Original Rust implementation (reference only)
 ```
 
 ## WHERE TO LOOK
 
-| Task                | Location                              | Notes                                |
-| ------------------- | ------------------------------------- | ------------------------------------ |
-| Telegram commands   | `app/api/telegram/webhook/route.ts`   | /outof, /list, /generate handlers    |
-| Item queries        | `lib/core/item/queries.ts`            | CRUD for items                       |
-| Shopping list logic | `lib/core/list/queries.ts`            | Create list, remove items            |
-| Name generation     | `lib/core/list/name-generator.ts`     | Random adjective + animal            |
-| Database schema     | `lib/services/db/schema.ts`           | item, shoppingList, shoppingListItem |
-| Db service          | `lib/services/db/live-layer.ts`       | Turso connection via libsql          |
-| Telegram service    | `lib/services/telegram/live-layer.ts` | Send messages via Bot API            |
+| Task                | Location                                          | Notes                                |
+| ------------------- | ------------------------------------------------- | ------------------------------------ |
+| Telegram commands   | `app/api/telegram/webhook/route.ts`               | /outof, /list, /generate handlers    |
+| Bought/skip actions | `app/[chatId]/list/[name]/item/[itemId]/route.ts` | GET with ?action=bought or skip      |
+| Item queries        | `lib/core/item/queries.ts`                        | CRUD for items                       |
+| Shopping list logic | `lib/core/list/queries.ts`                        | Create list, remove items            |
+| Name generation     | `lib/core/list/name-generator.ts`                 | Random adjective + animal            |
+| Database schema     | `lib/services/db/schema.ts`                       | item, shoppingList, shoppingListItem |
+| Db service          | `lib/services/db/live-layer.ts`                   | Turso connection via libsql          |
+| Telegram service    | `lib/services/telegram/live-layer.ts`             | Send messages via Bot API            |
 
 ## CODE MAP
 

@@ -160,7 +160,7 @@
         "Includes webhook registration command",
         "AGENTS.md updated for new project structure"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "context": {

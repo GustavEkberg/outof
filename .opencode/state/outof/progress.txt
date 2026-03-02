@@ -137,3 +137,11 @@ Started: 2026-03-02
 - pnpm tsc passes, pnpm lint clean
 - Files changed: none (already correct)
 - **Learnings:** `redirect()` in route handlers (not server components) works fine outside Effect — no need for the `matchEffect` pattern from the effect-next-redirects skill.
+
+## Task - docs-1
+
+- README.md already comprehensive: explains purpose, documents env vars, includes webhook curl command, dev setup
+- AGENTS.md updated: expanded structure tree to include action route path, `lib/utils.ts`, error annotations; added bought/skip actions to WHERE TO LOOK table
+- pnpm tsc passes, pnpm lint clean
+- Files changed: `AGENTS.md`
+- **Learnings:** Both docs were pre-existing and mostly complete. AGENTS.md structure tree was slightly stale — missing the nested `item/[itemId]/route.ts` action route and `lib/utils.ts`.
