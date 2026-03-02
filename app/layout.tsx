@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Outof',
+  title: 'outof',
   description: 'Minimal grocery list service for Telegram'
 };
 
