@@ -87,7 +87,7 @@
         "Returns 200 for valid requests",
         "Parses Telegram Update object"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "bot-outof",
