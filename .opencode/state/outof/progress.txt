@@ -124,3 +124,16 @@ Started: 2026-03-02
 - pnpm tsc passes, pnpm lint clean
 - Files changed: none (already correct)
 - **Learnings:** Page uses async server component with `await params` (Next.js 16 pattern). Three states: list not found, empty items, items present.
+
+## Task - ui-actions
+
+- Verified action route at `app/[chatId]/list/[name]/item/[itemId]/route.ts`
+- GET with `?action=bought`: sets `alsoDeleteFromMaster=true` → `removeFromShoppingList` deletes from both `shoppingListItem` and master `item` table
+- GET with `?action=skip`: sets `alsoDeleteFromMaster=false` → only removes from `shoppingListItem`
+- Invalid/missing action → returns 400 "Invalid action"
+- After action, `redirect()` from `next/navigation` sends user back to `/{chatId}/list/{name}`
+- `redirect()` is called outside the Effect pipeline (after `runPromise` resolves), avoiding RedirectError capture issues
+- When list empties, `removeFromShoppingList` auto-deletes the `shoppingList` row
+- pnpm tsc passes, pnpm lint clean
+- Files changed: none (already correct)
+- **Learnings:** `redirect()` in route handlers (not server components) works fine outside Effect — no need for the `matchEffect` pattern from the effect-next-redirects skill.

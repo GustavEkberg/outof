@@ -148,7 +148,7 @@
         "Redirects back to list page after action",
         "Invalid action returns 400"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "docs-1",
