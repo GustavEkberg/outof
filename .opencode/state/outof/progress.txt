@@ -102,3 +102,13 @@ Started: 2026-03-02
 - Empty list → "No items"; non-empty → newline-joined formatted items sent via `telegram.send`
 - Files changed: none (already correct)
 - **Learnings:** `formatDate` is a standalone utility in the route file — could be extracted if reused elsewhere.
+
+## Task - bot-generate
+
+- Verified /generate command handler in `app/api/telegram/webhook/route.ts` lines 98-118
+- Gets items via `getItemsByChatId(chatId)`, returns "No items to generate list" if empty
+- Calls `generateListName()` for random "Adjective Animal" name, passes to `createShoppingList(chatId, name, items)`
+- Builds URL with `listNameToSlug(list.name)` → `https://outof.im/{chatId}/list/{slug}`
+- Sends MarkdownV2 link `[Escaped Name](url)` with proper special char escaping
+- Files changed: none (already correct)
+- **Learnings:** Telegram MarkdownV2 requires escaping `_*[]()~` etc. with backslash. The regex `/[_*[\]()~\`>#+\-=|{}.!]/g` covers all special chars.

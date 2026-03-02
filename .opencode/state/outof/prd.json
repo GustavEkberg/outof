@@ -123,7 +123,7 @@
         "Responds with markdown link [Name](https://outof.im/{chatId}/list/{name})",
         "Shows No items to generate list if empty"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-list",
