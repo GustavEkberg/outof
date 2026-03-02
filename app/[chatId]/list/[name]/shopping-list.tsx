@@ -65,7 +65,7 @@ export function ShoppingList({ chatId, nameSlug, displayName, items: initialItem
         </p>
       </header>
 
-      <div className="flex-1 flex justify-center px-4 py-3">
+      <div className="flex-1 flex justify-center px-4 py-3 overflow-x-hidden">
         <motion.ul className="space-y-2 w-full max-w-lg" layout>
           <AnimatePresence mode="popLayout">
             {items.map(item => (
@@ -98,8 +98,8 @@ function ShoppingListItem({
   const triggered = useRef(false);
 
   // Background opacity tied to drag distance
-  const skipBgOpacity = useTransform(x, [-SWIPE_THRESHOLD, -SWIPE_THRESHOLD / 3, 0], [1, 0.3, 0]);
-  const boughtBgOpacity = useTransform(x, [0, SWIPE_THRESHOLD / 3, SWIPE_THRESHOLD], [0, 0.3, 1]);
+  const boughtBgOpacity = useTransform(x, [-SWIPE_THRESHOLD, -SWIPE_THRESHOLD / 3, 0], [1, 0.3, 0]);
+  const skipBgOpacity = useTransform(x, [0, SWIPE_THRESHOLD / 3, SWIPE_THRESHOLD], [0, 0.3, 1]);
 
   return (
     <motion.li
@@ -110,20 +110,20 @@ function ShoppingListItem({
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       className="relative overflow-hidden rounded-xl"
     >
-      {/* Skip background (red, revealed on swipe left — shows on right side) */}
-      <motion.div
-        style={{ opacity: skipBgOpacity }}
-        className="absolute inset-0 bg-red-500/20 flex items-center justify-end px-5 pointer-events-none"
-      >
-        <XIcon className="size-6 text-red-400" />
-      </motion.div>
-
-      {/* Bought background (green, revealed on swipe right — shows on left side) */}
+      {/* Bought background (green, revealed on swipe left) */}
       <motion.div
         style={{ opacity: boughtBgOpacity }}
-        className="absolute inset-0 bg-emerald-500/20 flex items-center justify-start px-5 pointer-events-none"
+        className="absolute inset-0 bg-emerald-500/20 flex items-center justify-end px-5 pointer-events-none"
       >
         <CheckIcon className="size-6 text-emerald-400" />
+      </motion.div>
+
+      {/* Skip background (red, revealed on swipe right) */}
+      <motion.div
+        style={{ opacity: skipBgOpacity }}
+        className="absolute inset-0 bg-red-500/20 flex items-center justify-start px-5 pointer-events-none"
+      >
+        <XIcon className="size-6 text-red-400" />
       </motion.div>
 
       {/* Draggable row */}
@@ -136,10 +136,10 @@ function ShoppingListItem({
           if (triggered.current) return;
           if (info.offset.x < -SWIPE_THRESHOLD) {
             triggered.current = true;
-            onAction(item.id, 'skip');
+            onAction(item.id, 'bought');
           } else if (info.offset.x > SWIPE_THRESHOLD) {
             triggered.current = true;
-            onAction(item.id, 'bought');
+            onAction(item.id, 'skip');
           }
         }}
         className="relative flex items-center gap-3 px-2 py-1 bg-black"
