@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm';
 import { Db } from '@/lib/services/db/live-layer';
 import { shoppingList, shoppingListItem, item } from '@/lib/services/db/schema';
 import type { ShoppingList, ShoppingListItem, Item } from '@/lib/services/db/schema';
-import { generateListName, listNameToSlug } from './name-generator';
+import { listNameToSlug } from './name-generator';
 
 export type ShoppingListWithItems = ShoppingList & {
   items: ShoppingListItem[];
@@ -11,12 +11,11 @@ export type ShoppingListWithItems = ShoppingList & {
 
 export const createShoppingList = (
   chatId: string,
+  name: string,
   items: Item[]
 ): Effect.Effect<ShoppingList, never, Db> =>
   Effect.gen(function* () {
     const db = yield* Db;
-
-    const name = generateListName();
 
     const [newList] = yield* Effect.promise(() =>
       db

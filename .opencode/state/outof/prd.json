@@ -74,7 +74,7 @@
         "lib/core/list/queries.ts has removeFromShoppingList(shoppingListId, itemId)",
         "lib/core/list/name-generator.ts generates random Adjective Animal names"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "api-webhook",

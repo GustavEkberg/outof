@@ -62,3 +62,13 @@ Started: 2026-03-02
 - pnpm tsc passes, pnpm lint clean
 - Files changed: none (already correct)
 - **Learnings:** `deleteItemsByIds` is an extra utility beyond PRD scope; loops individual deletes (no `inArray` used). Domain queries use `Effect.withSpan` for observability.
+
+## Task - domain-list
+
+- Refactored `createShoppingList` to accept `(chatId, name, items[])` — name generation moved to caller
+- Updated webhook route to call `generateListName()` then pass name to `createShoppingList`
+- Verified `getShoppingList(chatId, nameSlug)` converts slug back to title-case for DB lookup
+- Verified `removeFromShoppingList(shoppingListId, listItemId, alsoDeleteFromMaster)` — removes item, deletes list when empty
+- `name-generator.ts`: `generateListName()` (random Adjective Animal), `listNameToSlug`, `slugToListName`
+- Files changed: `lib/core/list/queries.ts`, `app/api/telegram/webhook/route.ts`
+- **Learnings:** PRD specified name as explicit param to `createShoppingList`; original code generated internally. Separating name generation from persistence is cleaner — caller controls naming, query just persists.

@@ -6,6 +6,7 @@ import { Telegram } from '@/lib/services/telegram/live-layer';
 import type { Db } from '@/lib/services/db/live-layer';
 import { getItemsByChatId, createItems } from '@/lib/core/item/queries';
 import { createShoppingList, listNameToSlug } from '@/lib/core/list/queries';
+import { generateListName } from '@/lib/core/list/name-generator';
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 const DOMAIN = 'https://outof.im';
@@ -102,7 +103,8 @@ const handleCommand = (
           return 'empty';
         }
 
-        const list = yield* createShoppingList(chatId, items);
+        const name = generateListName();
+        const list = yield* createShoppingList(chatId, name, items);
 
         const slug = listNameToSlug(list.name);
         const url = `${DOMAIN}/${chatId}/list/${slug}`;
