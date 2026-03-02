@@ -83,3 +83,13 @@ Started: 2026-03-02
 - Also contains full command dispatch (`/outof`, `/list`, `/generate`) — bot tasks will verify those
 - Files changed: none (already correct)
 - **Learnings:** Always return 200 to Telegram webhooks even on errors — they retry on non-200. Command parsing regex handles `@botname` suffix in group chats: `/outof@mybot args`.
+
+## Task - bot-outof
+
+- Verified /outof command handler in `app/api/telegram/webhook/route.ts` lines 63-79
+- Parses comma-separated args via `args.split(',').map(s => s.trim())`
+- Stores via `createItems(chatId, titles, userName)` — timestamp from schema default
+- Responds "Added items milk, eggs, bread" with joined titles
+- Empty input → usage message; all-whitespace items → "No valid items to add"
+- Files changed: none (already correct)
+- **Learnings:** Command dispatch is a single `handleCommand` function with switch/case — all bot-* tasks share this function.

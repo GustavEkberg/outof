@@ -99,7 +99,7 @@
         "Responds Added items milk, eggs, bread",
         "Handles empty input gracefully"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "bot-list",
