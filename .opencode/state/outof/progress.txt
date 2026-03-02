@@ -32,3 +32,13 @@ Started: 2026-03-02
 - pnpm tsc passes, pnpm lint clean
 - Files changed: none (already correct)
 - **Learnings:** Schema uses `$defaultFn(() => createId())` for CUID2 IDs; `integer('col', { mode: 'timestamp' })` for SQLite timestamp columns; `uniqueIndex` for composite unique constraints
+
+## Task - service-db
+
+- Verified Db service: `Effect.Service<Db>()('@app/Db', ...)` with Drizzle client over libsql
+- Internal `TursoConfig` tag reads `TURSO_DATABASE_URL` (Config.string) and `TURSO_AUTH_TOKEN` (Config.redacted, optional)
+- `Db.Live` provides `TursoConfigLive` layer; exports `Database` type alias
+- `lib/layers.ts` merges `Db.Live` + `Telegram.Live` into `AppLayer`
+- pnpm tsc passes, pnpm lint clean
+- Files changed: none (already correct)
+- **Learnings:** `Config.redacted` returns `Redacted<string>`; use `Redacted.value()` to extract. Auth token made optional via `catchAll(() => Effect.succeed(undefined))` for local dev without Turso auth.
