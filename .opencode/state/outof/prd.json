@@ -13,7 +13,7 @@
         "pnpm install succeeds",
         "pnpm tsc passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "db-1",

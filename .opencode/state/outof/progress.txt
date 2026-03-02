@@ -1,0 +1,24 @@
+# Progress Log
+
+PRD: outof
+Started: 2026-03-02
+
+## Codebase Patterns
+
+- Effect-TS services use `Effect.Service<T>()('@app/Name', { effect: ... })` with `static layer = this.Default; static Live = this.layer.pipe(Layer.provide(ConfigLive))`
+- Config via `Config.string()` / `Config.redacted()`, exception: `process.env.TELEGRAM_WEBHOOK_SECRET` in route
+- Domain queries in `lib/core/<domain>/queries.ts`, return `Effect.Effect<T, E, Db>`
+- Errors as `Data.TaggedError` in `lib/core/errors/` and `lib/services/*/errors.ts`
+- All files kebab-case, imports via `@/` alias, no barrel files
+
+---
+
+## Task - setup-1
+
+- Verified existing scaffold: Next.js 16, Effect-TS, Drizzle, Turso deps all present in package.json
+- tsconfig has strict mode + `@/*` path alias
+- .env.example exists with required env vars
+- pnpm install succeeds, pnpm tsc passes, pnpm lint clean
+- Added `.opencode/` to `.prettierignore` (was causing false failures)
+- Files changed: `.prettierignore`
+- **Learnings:** Codebase was pre-scaffolded with full implementation across all layers. All 13 PRD tasks appear code-complete; just need verification passes.
