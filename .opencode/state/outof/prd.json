@@ -50,7 +50,7 @@
         "Config uses TELEGRAM_BOT_TOKEN",
         "lib/layers.ts includes Telegram.Live in AppLayer"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "domain-item",
