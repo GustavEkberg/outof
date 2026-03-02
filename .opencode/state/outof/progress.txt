@@ -93,3 +93,12 @@ Started: 2026-03-02
 - Empty input → usage message; all-whitespace items → "No valid items to add"
 - Files changed: none (already correct)
 - **Learnings:** Command dispatch is a single `handleCommand` function with switch/case — all bot-* tasks share this function.
+
+## Task - bot-list
+
+- Verified /list command handler in `app/api/telegram/webhook/route.ts` lines 82-96
+- Retrieves items via `getItemsByChatId(chatId)`, formats each as `title (userName) MM-DD HH:MM`
+- Uses `formatDate()` helper (lines 45-51) producing zero-padded `MM-DD HH:MM`
+- Empty list → "No items"; non-empty → newline-joined formatted items sent via `telegram.send`
+- Files changed: none (already correct)
+- **Learnings:** `formatDate` is a standalone utility in the route file — could be extracted if reused elsewhere.

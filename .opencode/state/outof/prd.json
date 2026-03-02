@@ -111,7 +111,7 @@
         "Responds with formatted list",
         "Shows No items if empty"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "bot-generate",
