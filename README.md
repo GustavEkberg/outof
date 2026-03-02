@@ -68,7 +68,7 @@ After deploying, register the webhook with Telegram:
 curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://outof.im/api/telegram/webhook",
+    "url": "https://www.outof.im/api/telegram/webhook",
     "secret_token": "<YOUR_WEBHOOK_SECRET>"
   }'
 ```
