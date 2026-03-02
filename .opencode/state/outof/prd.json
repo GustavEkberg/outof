@@ -62,7 +62,7 @@
         "lib/core/item/queries.ts has deleteItem(itemId)",
         "All functions return Effect with proper error types"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "domain-list",

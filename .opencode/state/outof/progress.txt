@@ -53,3 +53,12 @@ Started: 2026-03-02
 - pnpm tsc passes, pnpm lint clean
 - Files changed: none (already correct)
 - **Learnings:** Public API is `send` not `sendMessage`; `send` adds chunking + span annotations. `splitIntoChunks` util handles messages exceeding Telegram's 4096 char limit.
+
+## Task - domain-item
+
+- Verified item CRUD: `getItemsByChatId`, `createItems`, `deleteItem` + bonus `deleteItemsByIds`
+- All return `Effect.Effect<T, never, Db>` — DB failures are defects via `Effect.promise()`
+- `createItems` trims/filters empty titles, returns `[]` for empty input
+- pnpm tsc passes, pnpm lint clean
+- Files changed: none (already correct)
+- **Learnings:** `deleteItemsByIds` is an extra utility beyond PRD scope; loops individual deletes (no `inArray` used). Domain queries use `Effect.withSpan` for observability.
