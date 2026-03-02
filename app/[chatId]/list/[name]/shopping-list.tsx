@@ -1,8 +1,10 @@
 'use client';
 
-import { useOptimistic, useTransition, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
-import { removeItemAction } from './actions';
+import { removeItemAction, getListItems } from './actions';
+
+const POLL_INTERVAL = 5000;
 
 type ListItem = {
   id: string;
@@ -18,19 +20,32 @@ type Props = {
 };
 
 export function ShoppingList({ chatId, nameSlug, displayName, items: initialItems }: Props) {
-  const [isPending, startTransition] = useTransition();
-  const [items, removeItem] = useOptimistic(initialItems, (state, itemId: string) =>
-    state.filter(i => i.id !== itemId)
-  );
+  const [items, setItems] = useState(initialItems);
+  const [isPending, setIsPending] = useState(false);
+
+  // Poll for changes from other users
+  useEffect(() => {
+    const id = setInterval(async () => {
+      const serverItems = await getListItems(chatId, nameSlug);
+      setItems(prev => {
+        const serverIds = new Set(serverItems.map(i => i.id));
+        // Only update if items were removed (by another user)
+        const changed = prev.some(i => !serverIds.has(i.id));
+        return changed ? prev.filter(i => serverIds.has(i.id)) : prev;
+      });
+    }, POLL_INTERVAL);
+
+    return () => clearInterval(id);
+  }, [chatId, nameSlug]);
 
   const handleAction = useCallback(
     (itemId: string, action: 'bought' | 'skip') => {
-      startTransition(async () => {
-        removeItem(itemId);
-        await removeItemAction(chatId, nameSlug, itemId, action);
-      });
+      // Optimistic removal
+      setItems(prev => prev.filter(i => i.id !== itemId));
+      setIsPending(true);
+      removeItemAction(chatId, nameSlug, itemId, action).finally(() => setIsPending(false));
     },
-    [chatId, nameSlug, removeItem, startTransition]
+    [chatId, nameSlug]
   );
 
   if (items.length === 0) {
@@ -106,7 +121,7 @@ function ShoppingListItem({
       layout
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: 80, filter: 'blur(4px)' }}
+      exit={{ opacity: 0, scale: 0.95, filter: 'blur(6px)' }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       className="relative overflow-hidden rounded-xl"
     >
