@@ -1,7 +1,8 @@
 'use client';
 
-import { useOptimistic, useTransition, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useOptimistic, useTransition, useCallback, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
+import { removeItemAction } from './actions';
 
 type ListItem = {
   id: string;
@@ -16,20 +17,6 @@ type Props = {
   items: ListItem[];
 };
 
-async function performAction(
-  chatId: string,
-  nameSlug: string,
-  itemId: string,
-  action: 'bought' | 'skip'
-) {
-  const res = await fetch(`/${chatId}/list/${nameSlug}/item/${itemId}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action })
-  });
-  if (!res.ok) throw new Error('Action failed');
-}
-
 export function ShoppingList({ chatId, nameSlug, displayName, items: initialItems }: Props) {
   const [isPending, startTransition] = useTransition();
   const [items, removeItem] = useOptimistic(initialItems, (state, itemId: string) =>
@@ -40,7 +27,7 @@ export function ShoppingList({ chatId, nameSlug, displayName, items: initialItem
     (itemId: string, action: 'bought' | 'skip') => {
       startTransition(async () => {
         removeItem(itemId);
-        await performAction(chatId, nameSlug, itemId, action);
+        await removeItemAction(chatId, nameSlug, itemId, action);
       });
     },
     [chatId, nameSlug, removeItem, startTransition]
@@ -78,8 +65,8 @@ export function ShoppingList({ chatId, nameSlug, displayName, items: initialItem
         </p>
       </header>
 
-      <div className="flex-1 px-4 py-3">
-        <motion.ul className="space-y-2 max-w-lg mx-auto" layout>
+      <div className="flex-1 flex justify-center px-4 py-3">
+        <motion.ul className="space-y-2 w-full max-w-lg" layout>
           <AnimatePresence mode="popLayout">
             {items.map(item => (
               <ShoppingListItem
@@ -96,6 +83,8 @@ export function ShoppingList({ chatId, nameSlug, displayName, items: initialItem
   );
 }
 
+const SWIPE_THRESHOLD = 80;
+
 function ShoppingListItem({
   item,
   onAction,
@@ -105,6 +94,13 @@ function ShoppingListItem({
   onAction: (id: string, action: 'bought' | 'skip') => void;
   disabled: boolean;
 }) {
+  const x = useMotionValue(0);
+  const triggered = useRef(false);
+
+  // Background opacity tied to drag distance
+  const skipBgOpacity = useTransform(x, [-SWIPE_THRESHOLD, -SWIPE_THRESHOLD / 3, 0], [1, 0.3, 0]);
+  const boughtBgOpacity = useTransform(x, [0, SWIPE_THRESHOLD / 3, SWIPE_THRESHOLD], [0, 0.3, 1]);
+
   return (
     <motion.li
       layout
@@ -112,37 +108,72 @@ function ShoppingListItem({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 80, filter: 'blur(4px)' }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className="group flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/[0.06] px-2 py-1"
+      className="relative overflow-hidden rounded-xl"
     >
-      <motion.button
-        whileTap={{ scale: 0.85 }}
-        onClick={() => onAction(item.id, 'skip')}
-        disabled={disabled}
-        className="shrink-0 flex items-center justify-center size-11 rounded-xl
-          text-white/25 hover:text-red-400 hover:bg-red-400/10
-          active:text-red-400 active:bg-red-400/10
-          transition-colors duration-150 disabled:opacity-30"
-        aria-label={`Skip ${item.title}`}
+      {/* Skip background (red, revealed on swipe left — shows on right side) */}
+      <motion.div
+        style={{ opacity: skipBgOpacity }}
+        className="absolute inset-0 bg-red-500/20 flex items-center justify-end px-5 pointer-events-none"
       >
-        <XIcon className="size-5" />
-      </motion.button>
+        <XIcon className="size-6 text-red-400" />
+      </motion.div>
 
-      <span className="flex-1 text-[15px] text-white/80 leading-tight py-2.5 select-none">
-        {item.title}
-      </span>
-
-      <motion.button
-        whileTap={{ scale: 0.85 }}
-        onClick={() => onAction(item.id, 'bought')}
-        disabled={disabled}
-        className="shrink-0 flex items-center justify-center size-11 rounded-xl
-          text-white/25 hover:text-emerald-400 hover:bg-emerald-400/10
-          active:text-emerald-400 active:bg-emerald-400/10
-          transition-colors duration-150 disabled:opacity-30"
-        aria-label={`Mark ${item.title} as bought`}
+      {/* Bought background (green, revealed on swipe right — shows on left side) */}
+      <motion.div
+        style={{ opacity: boughtBgOpacity }}
+        className="absolute inset-0 bg-emerald-500/20 flex items-center justify-start px-5 pointer-events-none"
       >
-        <CheckIcon className="size-5" />
-      </motion.button>
+        <CheckIcon className="size-6 text-emerald-400" />
+      </motion.div>
+
+      {/* Draggable row */}
+      <motion.div
+        style={{ x }}
+        drag={disabled ? false : 'x'}
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.5}
+        onDragEnd={(_, info) => {
+          if (triggered.current) return;
+          if (info.offset.x < -SWIPE_THRESHOLD) {
+            triggered.current = true;
+            onAction(item.id, 'skip');
+          } else if (info.offset.x > SWIPE_THRESHOLD) {
+            triggered.current = true;
+            onAction(item.id, 'bought');
+          }
+        }}
+        className="relative flex items-center gap-3 px-2 py-1 bg-black"
+      >
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={() => onAction(item.id, 'skip')}
+          disabled={disabled}
+          className="shrink-0 flex items-center justify-center size-11 rounded-xl
+            text-white/25 hover:text-red-400 hover:bg-red-400/10
+            active:text-red-400 active:bg-red-400/10
+            transition-colors duration-150 disabled:opacity-30"
+          aria-label={`Skip ${item.title}`}
+        >
+          <XIcon className="size-5" />
+        </motion.button>
+
+        <span className="flex-1 text-[15px] text-white/80 leading-tight py-2.5 select-none text-center">
+          {item.title}
+        </span>
+
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={() => onAction(item.id, 'bought')}
+          disabled={disabled}
+          className="shrink-0 flex items-center justify-center size-11 rounded-xl
+            text-white/25 hover:text-emerald-400 hover:bg-emerald-400/10
+            active:text-emerald-400 active:bg-emerald-400/10
+            transition-colors duration-150 disabled:opacity-30"
+          aria-label={`Mark ${item.title} as bought`}
+        >
+          <CheckIcon className="size-5" />
+        </motion.button>
+      </motion.div>
     </motion.li>
   );
 }
